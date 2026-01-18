@@ -1,0 +1,98 @@
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="nav-menu">
+    <div class="nav-header">
+        <h3>Renault Smart Center</h3>
+    </div>
+
+    <nav class="nav-items">
+        <NavLink href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+        </NavLink>
+
+        <NavLink href="/customers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Customers</span>
+        </NavLink>
+
+        <NavLink href="/vehicles" class="nav-item">
+            <span class="nav-icon">🚗</span>
+            <span>Vehicles</span>
+        </NavLink>
+
+        <NavLink href="/service-orders" class="nav-item">
+            <span class="nav-icon">🔧</span>
+            <span>Service Orders</span>
+        </NavLink>
+
+        <NavLink href="/appointments" class="nav-item">
+            <span class="nav-icon">📅</span>
+            <span>Appointments</span>
+        </NavLink>
+
+        <NavLink href="/inventory" class="nav-item">
+            <span class="nav-icon">📦</span>
+            <span>Inventory</span>
+        </NavLink>
+
+        <NavLink href="/billing" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billing</span>
+        </NavLink>
+
+        <NavLink href="/reports" class="nav-item">
+            <span class="nav-icon">📄</span>
+            <span>Reports</span>
+        </NavLink>
+    </nav>
+</div>
+
+<style>
+    .nav-menu {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #444;
+    }
+
+    .nav-header h3 {
+        margin: 0;
+        color: #FFD700;
+        font-size: 1.25rem;
+    }
+
+    .nav-items {
+        flex: 1;
+        padding: 1rem 0;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        color: #ccc;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+    .nav-item:hover {
+        background: #1a1a1a;
+        color: #FFD700;
+    }
+
+    .nav-item.active {
+        background: #1a1a1a;
+        color: #FFD700;
+        border-left: 3px solid #FFD700;
+    }
+
+    .nav-icon {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+    }
+</style>
