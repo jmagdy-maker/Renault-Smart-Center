@@ -12,22 +12,28 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// -------------------------------
 // Add services to the container
+// -------------------------------
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+// -------------------------------
 // Database & Identity
+// -------------------------------
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
-// Authentication
+// -------------------------------
+// Authentication (JWT Bearer)
+// -------------------------------
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["SecretKey"];
 
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -39,26 +45,47 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+// -------------------------------
+// Authorization
+// -------------------------------
+builder.Services.AddAuthorizationCore(); // ??? ?? Blazor Server
 
+// -------------------------------
 // Protected Browser Storage
+// -------------------------------
 builder.Services.AddScoped<ProtectedLocalStorage>();
 
+// -------------------------------
 // Custom Services
-builder.Services.AddScoped<ApiClient>();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+// -------------------------------
+// Custom AuthenticationStateProvider
+builder.Services.AddScoped<CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
+    provider.GetRequiredService<CustomAuthenticationStateProvider>());
+
+// LocalStorage wrapper
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 
+// ApiClient
+builder.Services.AddScoped<ApiClient>();
+
+// -------------------------------
 // HTTP Client
+// -------------------------------
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+// -------------------------------
+// Build App
+// -------------------------------
 var app = builder.Build();
 
+// -------------------------------
 // Configure the HTTP request pipeline
+// -------------------------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");

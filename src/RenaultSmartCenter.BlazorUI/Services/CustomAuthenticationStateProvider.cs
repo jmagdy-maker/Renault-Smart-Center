@@ -14,25 +14,41 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         _localStorage = localStorage;
     }
 
-    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    // ????? prerendering ???? anonymous user
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var tokenResult = await _localStorage.GetAsync<string>("authToken");
-        var token = tokenResult.Success ? tokenResult.Value : null;
-        
-        if (string.IsNullOrEmpty(token))
-        {
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-        }
-
-        var claims = ParseClaimsFromJwt(token);
-        var identity = new ClaimsIdentity(claims, "jwt");
-        var user = new ClaimsPrincipal(identity);
-
-        return new AuthenticationState(user);
+        var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+        return Task.FromResult(new AuthenticationState(anonymous));
     }
 
-    public void MarkUserAsAuthenticated(string token)
+    // Method ?????? ?????? ??? Render
+    public async Task LoadUserFromStorageAsync()
     {
+        try
+        {
+            var tokenResult = await _localStorage.GetAsync<string>("authToken");
+            var token = tokenResult.Success ? tokenResult.Value : null;
+
+            if (string.IsNullOrEmpty(token))
+                return;
+
+            var claims = ParseClaimsFromJwt(token);
+            var identity = new ClaimsIdentity(claims, "jwt");
+            var user = new ClaimsPrincipal(identity);
+
+            // Notifies the Authentication system
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        }
+        catch
+        {
+            // Ignore errors, keep anonymous
+        }
+    }
+
+    public async Task MarkUserAsAuthenticatedAsync(string token)
+    {
+        await _localStorage.SetAsync("authToken", token);
+
         var claims = ParseClaimsFromJwt(token);
         var identity = new ClaimsIdentity(claims, "jwt");
         var user = new ClaimsPrincipal(identity);
@@ -40,12 +56,15 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
 
-    public void MarkUserAsLoggedOut()
+    public async Task MarkUserAsLoggedOutAsync()
     {
+        await _localStorage.DeleteAsync("authToken");
+
         var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
     }
 
+    // ====== JWT Parsing ======
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
         var claims = new List<Claim>();
@@ -85,6 +104,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     }
 }
 
+// ====== LocalStorage Service ======
 public interface ILocalStorageService
 {
     Task<T?> GetItemAsync<T>(string key);

@@ -17,6 +17,7 @@ public static class InfrastructureServiceRegistration
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly("RenaultSmartCenter.Infrastructure")));
+        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
         // Identity
         services.AddDefaultIdentity<IdentityUser>(options =>

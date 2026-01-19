@@ -1,4 +1,4 @@
-@page "/login"
+﻿@page "/login"
 @using RenaultSmartCenter.BlazorUI.Services
 @inject ApiClient ApiClient
 @inject CustomAuthenticationStateProvider AuthStateProvider
@@ -13,16 +13,16 @@
             <h2>Renault Smart Center</h2>
             <p>Enterprise ERP System</p>
         </div>
-        
+
         <div class="login-body">
             @if (!string.IsNullOrEmpty(errorMessage))
             {
                 <div class="alert alert-danger">@errorMessage</div>
             }
 
-            <EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
+            <EditForm Model="@loginRequest" OnValidSubmit="@HandleLoginAsync">
                 <DataAnnotationsValidator />
-                
+
                 <div class="form-group">
                     <label>Email</label>
                     <InputText @bind-Value="loginRequest.Email" class="form-control" />
@@ -49,6 +49,7 @@
 </div>
 
 <style>
+    /* نفس CSS اللي عندك */
     .login-container {
         display: flex;
         justify-content: center;
@@ -72,25 +73,25 @@
         color: #FFD700;
     }
 
-    .login-header h2 {
-        margin: 0;
-        font-size: 2rem;
-    }
+        .login-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
 
-    .login-header p {
-        color: #ccc;
-        margin-top: 0.5rem;
-    }
+        .login-header p {
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
 
     .form-group {
         margin-bottom: 1rem;
     }
 
-    .form-group label {
-        display: block;
-        color: #ccc;
-        margin-bottom: 0.5rem;
-    }
+        .form-group label {
+            display: block;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
 
     .form-control {
         width: 100%;
@@ -112,14 +113,14 @@
         cursor: pointer;
     }
 
-    .btn-primary:hover {
-        background: #FFB700;
-    }
+        .btn-primary:hover {
+            background: #FFB700;
+        }
 
-    .btn-primary:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
     .alert {
         padding: 1rem;
@@ -144,20 +145,28 @@
         public string Password { get; set; } = string.Empty;
     }
 
-    private async Task HandleLogin()
+    private async Task HandleLoginAsync()
     {
         isLoading = true;
         errorMessage = string.Empty;
 
         try
         {
+            // نرسل الطلب للـ API
             var response = await ApiClient.PostAsync<LoginResponse>("/api/auth/login", loginRequest);
-            
+
             if (response != null && !string.IsNullOrEmpty(response.Token))
             {
+                // ⭐ نخزن التوكن بعد أول Render
                 await LocalStorage.SetItemAsync("authToken", response.Token);
+
+                // نحدّث ApiClient
                 ApiClient.SetToken(response.Token);
-                AuthStateProvider.MarkUserAsAuthenticated(response.Token);
+
+                // نحدّث AuthenticationState
+                await AuthStateProvider.LoadUserFromStorageAsync();
+
+                // نروح للداشبورد
                 Navigation.NavigateTo("/dashboard");
             }
             else
@@ -165,13 +174,14 @@
                 errorMessage = "Invalid email or password";
             }
         }
-        catch (Exception ex)
+        catch
         {
             errorMessage = "Login failed. Please try again.";
         }
         finally
         {
             isLoading = false;
+            StateHasChanged(); // تحديث الواجهة
         }
     }
 
