@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using RenaultSmartCenter.Application.Interfaces;
 using RenaultSmartCenter.Domain.Entities;
 using RenaultSmartCenter.Domain.Enums;
-using RenaultSmartCenter.Infrastructure.Data;
 
 namespace RenaultSmartCenter.Application.Features.Dashboard;
 
@@ -45,9 +44,9 @@ public class TopModelDto
 
 public class DashboardService : IDashboardService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
 
-    public DashboardService(ApplicationDbContext context)
+    public DashboardService(IApplicationDbContext context)
     {
         _context = context;
     }

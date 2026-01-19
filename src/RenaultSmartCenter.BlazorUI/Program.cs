@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Protected Browser Storage
-builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage, ProtectedLocalStorage>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
 
 // Custom Services
 builder.Services.AddScoped<ApiClient>();

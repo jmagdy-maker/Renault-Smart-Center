@@ -4,7 +4,6 @@ using RenaultSmartCenter.Application.Common.DTOs;
 using RenaultSmartCenter.Application.Interfaces;
 using RenaultSmartCenter.Domain.Entities;
 using RenaultSmartCenter.Domain.Enums;
-using RenaultSmartCenter.Infrastructure.Data;
 
 namespace RenaultSmartCenter.Application.Features.ServiceOrders;
 
@@ -20,11 +19,11 @@ public interface IServiceOrderService
 
 public class ServiceOrderService : IServiceOrderService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ServiceOrderService(ApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
+    public ServiceOrderService(IApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _unitOfWork = unitOfWork;

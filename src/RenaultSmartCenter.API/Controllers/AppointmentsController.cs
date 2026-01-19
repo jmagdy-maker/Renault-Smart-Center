@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RenaultSmartCenter.Application.Common.DTOs;
 using RenaultSmartCenter.Application.Features.Appointments;
+using System.Security.Claims;
 
 namespace RenaultSmartCenter.API.Controllers;
 

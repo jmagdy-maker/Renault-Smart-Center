@@ -4,7 +4,6 @@ using RenaultSmartCenter.Application.Common.DTOs;
 using RenaultSmartCenter.Application.Interfaces;
 using RenaultSmartCenter.Domain.Entities;
 using RenaultSmartCenter.Domain.Enums;
-using RenaultSmartCenter.Infrastructure.Data;
 
 namespace RenaultSmartCenter.Application.Features.Appointments;
 
@@ -19,11 +18,11 @@ public interface IAppointmentService
 
 public class AppointmentService : IAppointmentService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public AppointmentService(ApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
+    public AppointmentService(IApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _unitOfWork = unitOfWork;

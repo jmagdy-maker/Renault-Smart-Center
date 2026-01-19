@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RenaultSmartCenter.Domain.Entities;
+using RenaultSmartCenter.Application.Interfaces;
 using System.Linq.Expressions;
 
 namespace RenaultSmartCenter.Infrastructure.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -14,7 +15,7 @@ public class ApplicationDbContext : IdentityDbContext
 
     // DbSets
     public DbSet<Branch> Branches { get; set; }
-    public DbSet<User> Users { get; set; }
+    public new DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<ServiceOrder> ServiceOrders { get; set; }

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using RenaultSmartCenter.Application.Common.DTOs;
 using RenaultSmartCenter.Application.Interfaces;
 using RenaultSmartCenter.Domain.Entities;
-using RenaultSmartCenter.Infrastructure.Data;
 
 namespace RenaultSmartCenter.Application.Features.Inventory;
 
@@ -18,11 +17,11 @@ public interface ISparePartService
 
 public class SparePartService : ISparePartService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public SparePartService(ApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
+    public SparePartService(IApplicationDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _unitOfWork = unitOfWork;
